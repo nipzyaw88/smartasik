@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const LoginForm = ({ type, login, setLogin, submitting, handleSubmit }) => {
   return (
-    <section className=''>
+    <section className='col-md-5'>
       <form
         method="POST"
         onSubmit={handleSubmit}
