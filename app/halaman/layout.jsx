@@ -15,7 +15,7 @@ const page = ({ children }) => {
             <div className='container-fluid'>
                 <div className='row'>
                     <LeftNav />
-                    <div className='col-10'>
+                    <div className='col'>
                         {children}
                     </div>
                 </div>
