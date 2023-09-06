@@ -578,7 +578,8 @@ const PencatatanPasien = () => {
                         <button type="submit" className="btn btn-primary me-3">{isSubmit ? 'Menyimpan...' : 'Simpan'}</button>
                         <button type="submit" className="btn btn-primary me-3">Cetak Kartu</button>
                         <button type="submit" className="btn btn-primary me-3">Ulang</button>
-                        <button type="submit" className="btn btn-primary">Registrasi</button>
+                        {/* <button type="submit" className="btn btn-primary">Registrasi</button> */}
+                        <Link href='/halaman/registrasi-klinik' className="btn btn-primary">Registrasi</Link>
                     </div>
                 </div>
                 </form>
