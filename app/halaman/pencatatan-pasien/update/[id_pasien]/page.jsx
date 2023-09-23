@@ -4,11 +4,11 @@ import { useState, useEffect, useRef } from "react"
 import Select from 'react-select'
 import SelectNipz from '@app/components/SelectNipz'
 import AsyncSelect from 'react-select/async'
-import { useRouter } from "next/navigation";
-import ReactInputDateMask from 'react-input-date-mask'
 
-const PencatatanPasien = () => {
-    const router = useRouter()
+const PencatatanPasien = ({ params }) => {
+    const {id_pasien} = params;
+    console.log('id pasien : ', id_pasien)
+    const [idPasien, setIdPasien] = useState(null)
     const [timer, setTimer] = useState(null)
     const [agama, setagama] = useState([]);
     const [statusNikah, setStatusPernikahan] = useState([]);
@@ -19,6 +19,7 @@ const PencatatanPasien = () => {
     const [kecamatan, setKecamatan] = useState([]);
     const [kabkot, setKabkot] = useState([]);
     const [provinsi, setProvinsi] = useState([]);
+    const [kelurahanSelected, setKelurahanSelected] = useState(null)
     const golonganDarah = [
         {
             'nama' : 'O+'
@@ -70,8 +71,55 @@ const PencatatanPasien = () => {
     useEffect(() => {
         // nikRef.current.value = '32732132'
         // setKecamatan([{value:'', label: '-- Pilih Kecamatan --'}])
-        async function fetchData() {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/agama/get/100/0`, {
+        let idkel = null;
+        async function fetchData() {            
+            
+        }
+
+        async function fetchPasien() {
+            const pasienx = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pasien/get/by/10/0`, {
+                method: "POST",
+                body: JSON.stringify({
+                    id_pasien: id_pasien
+                }),
+                headers: {
+                    'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
+                    'Content-Type': 'application/json'
+                }
+            }).then((response) => response.json())
+            .then((data) => {
+                const val = data.data[0];
+                setIdPasien(val.id_pasien);
+                // setIsPasienLama(val.nomor_rekam_medik == '' ? false : true)
+                noRekamMedikRef.current.value = val.nomor_rekam_medik
+                nikRef.current.value = val.nomor_induk_kependudukan
+                namaPasienRef.current.value = val.nama_pasien
+                tempatLahirRef.current.value = val.tempatlahir_pasien
+                tglLahirRef.current.value = val.tanggallahir_pasien
+                jenisKelaminRef.current.value = val.id_jeniskelamin
+                agamaRef.current.value = val.id_agama
+                statusPernikahanRef.current.value = val.id_statuspernikahan
+                golonganDarahRef.current.value = val.golongandarah_pasien
+                namaIbuRef.current.value = val.nama_ibu_kandung
+                namaAyahRef.current.value = val.nama_ayah
+                namaPasanganRef.current.value = val.nama_suami
+                pendidikanRef.current.value = val.id_pendidikan
+                pekerjaanRef.current.value = val.id_pekerjaan
+                sukuRef.current.value = val.id_suku
+                wargaNegaraRef.current.value = val.warganegara_pasien
+                alamatRef.current.value = val.alamat_pasien
+                alamatDomisiliRef.current.value = val.alamat_domisili_pasien
+                noTeleponRef.current.value = val.nomortelepon_pasien
+                emailPasienRef.current.value = val.alamatemail_pasien
+                console.log('diselectnya', val.id_kelurahan)
+                idkel = val.id_kelurahan
+                setKelurahanSelected(val.id_kelurahan)
+            })
+            .catch(console.error);
+        }
+
+        const mAgama = () => new Promise(resolve => {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/agama/get/100/0`, {
                 method: "GET",
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
@@ -80,10 +128,13 @@ const PencatatanPasien = () => {
             }).then((response) => response.json())
             .then((data) => {
                 setagama(data.data);
+                resolve()
             })
             .catch(console.error);
-            
-            const jk = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/jeniskelamin/get/100/0`, {
+        });
+    
+        const mJenisKelamin = () => new Promise(resolve => {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/jeniskelamin/get/100/0`, {
                 method: "GET",
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
@@ -92,10 +143,13 @@ const PencatatanPasien = () => {
             }).then((response) => response.json())
             .then((data) => {
                 setJenisKelamin(data.data);
+                resolve()
             })
             .catch(console.error);
-            
-            const jenis = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/statuspernikahan/get/10/0`, {
+        })
+    
+        const mStatusPernikahan = () => new Promise(resolve => {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/statuspernikahan/get/10/0`, {
                 method: "GET",
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
@@ -104,10 +158,13 @@ const PencatatanPasien = () => {
             }).then((statusnikah) => statusnikah.json())
             .then((data) => {
                 setStatusPernikahan(data.data);
+                resolve()
             })
             .catch(console.error);
-
-            const daftarPasien = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pendidikan/get/10/0`, {
+        })
+    
+        const mPendidikan = () => new Promise(resolve => {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/pendidikan/get/10/0`, {
                 method: "GET",
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
@@ -116,10 +173,13 @@ const PencatatanPasien = () => {
             }).then((pendidikan) => pendidikan.json())
             .then((data) => {
                 setPendidikan(data.data);
+                resolve()
             })
             .catch(console.error);
-            
-            const pekerjaan = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pekerjaan/get/10/0`, {
+        })
+    
+        const mPekerjaan = () => new Promise(resolve => {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/pekerjaan/get/10/0`, {
                 method: "GET",
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
@@ -128,10 +188,13 @@ const PencatatanPasien = () => {
             }).then((pekerjaan) => pekerjaan.json())
             .then((data) => {
                 setPekerjaan(data.data);
+                resolve()
             })
             .catch(console.error);
-            
-            const suku = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/suku/get/10/0`, {
+        })
+    
+        const mSuku = () => new Promise(resolve => {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/suku/get/10/0`, {
                 method: "GET",
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
@@ -140,11 +203,85 @@ const PencatatanPasien = () => {
             }).then((suku) => suku.json())
             .then((data) => {
                 setSuku(data.data);
+                resolve()
             })
             .catch(console.error);
-        }
+        })
 
-        fetchData();
+        const mKelurahan = id => new Promise(resolve => {
+            const kelurahanx = []
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/v_wilayah/get/by/10/0`, {
+                method: "POST",
+                body: JSON.stringify({
+                    id_kelurahan: id
+                }),
+                headers: {
+                    'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
+                    'Content-Type': 'application/json'
+                }
+            }).then((response) => response.json())
+            .then((data) => {
+                console.log(data)
+                if(data.data.length > 0) {
+                    data.data.map((d) => {
+                        kelurahanx.push({value : `${d.id_kelurahan}|${d.id_kecamatan}|${d.id_kotakabupaten}|${d.id_propinsi}`, label : `${d.nama_kelurahan} / ${d.nama_kecamatan} / ${d.nama_kotakabupaten} / ${d.nama_propinsi}`});
+                    })
+                }
+                // return kelurahanx
+                // setOptionsKelurahan(kelurahan)
+            })
+            .finally(() => {
+                resolve(kelurahanx)
+            })
+            .catch(console.error)
+        })
+
+        // fetchData();
+        // fetchDatax()
+        async function getMasterData(masters) {
+            for(const mast of masters) {
+                switch (mast) {
+                    case 'agama':
+                        mAgama()
+                        break;
+                    case 'jk':
+                        mJenisKelamin()
+                        break;
+                    case 'statusPernikahan':
+                        mStatusPernikahan()
+                        break;
+                    case 'pendidikan':
+                        mPendidikan()
+                        break;
+                    case 'pekerjaan':
+                        mPekerjaan()
+                        break;
+                    case 'suku':
+                        mSuku()
+                        break;
+                    // case 'kelurahan':
+                    //     mKelurahan()
+                    //     break;
+                }
+            }
+        }
+    
+        getMasterData(['agama', 'jk', 'statusPernikahan', 'pendidikan', 'pekerjaan','suku']).then(() => {
+            setTimeout(() => {
+                fetchPasien().finally((data) => {
+                    console.log('selected kelurahan :', idkel)
+                    mKelurahan(idkel).then((d) => {
+                        console.log(d[0])
+                        const label = d[0].label.split(' / ')
+                        const value = d[0].value.split('|')
+                        setKelurahan([{value: value[0], label: label[0]}])
+                        setKecamatan([{value: value[1], label: label[1]}])
+                        setKabkot([{value: value[2], label: label[2]}])
+                        setProvinsi([{value: value[3], label: label[3]}])
+                    })
+                })
+            }, 500);
+        })
     }, []);
 
     const handleIsPasienLama = (val) => {
@@ -159,9 +296,8 @@ const PencatatanPasien = () => {
         const form_values = Object.fromEntries(formData);
         // console.log('www', form_values)
         // document.getElementById("pencatatan-pasien").reset();
-        const url = isPasienLama ? 'add' : 'addauto';
-        const pasien = fetch(`${process.env.NEXT_PUBLIC_API_URL}/pasien/${url}`, {
-            method: "POST",
+        const pasien = fetch(`${process.env.NEXT_PUBLIC_API_URL}/pasien/edit`, {
+            method: "PUT",
             body: JSON.stringify(form_values),
             // JSON.stringify({
             //     id_propinsi: propinsiRef.current.value, 
@@ -209,7 +345,6 @@ const PencatatanPasien = () => {
         }).then((response) => response.json())
         .then((data) => {
             console.log(data);
-            router.push(`/halaman/pencatatan-pasien/update/${data.data.id_pasien}`)
         })
         .catch(console.error);
         setIsSubmit(false);
@@ -283,12 +418,6 @@ const PencatatanPasien = () => {
         setProvinsi([])
     }
 
-    const handleTglLahir = (e) => {
-        console.log(e);
-        const tgl = e.split('/');
-        document.getElementsByName('tanggallahir_pasien')[0].value = `${tgl[2]}-${tgl[1]}-${tgl[0]}`;
-    }
-
     return (
         <div className='p-2 h-100'>
             <div className='card bg-light mb-3'>
@@ -358,9 +487,7 @@ const PencatatanPasien = () => {
                                         <label className="form-label">Tanggal Lahir</label>
                                     </div>
                                     <div className="col-md-5">
-                                        {/* <input className="form-control form-control-sm" type='text' name="tanggallahir_pasien" ref={tglLahirRef} required/> */}
-                                        <ReactInputDateMask className="form-control form-control-sm" mask='dd/mm/yyyy' onChange={handleTglLahir} showMaskOnFocus={false}/>
-                                        <input type="hidden" id="tanggallahir_pasien" name="tanggallahir_pasien"/>
+                                        <input className="form-control form-control-sm" type='text' name="tanggallahir_pasien" ref={tglLahirRef} required/>
                                     </div>
                                 </div>
                             </div>
@@ -466,7 +593,7 @@ const PencatatanPasien = () => {
                                         <label className="form-label">Nama Pasangan</label>
                                     </div>
                                     <div className="col-md-5">
-                                        <input className="form-control form-control-sm" type='text' name="nama_pasangan" ref={namaPasanganRef}/>
+                                        <input className="form-control form-control-sm" type='text' name="nama_suami" ref={namaPasanganRef}/>
                                     </div>
                                 </div>
                             </div>
@@ -713,7 +840,7 @@ const PencatatanPasien = () => {
                         <button type="submit" className="btn btn-primary me-3">Cetak Kartu</button>
                         <button type="submit" onClick={handleResetForm} className="btn btn-primary me-3">Ulang</button>
                         {/* <button type="submit" className="btn btn-primary">Registrasi</button> */}
-                        <Link href='/halaman/registrasi-klinik' className="btn btn-primary disabled" aria-disabled="true">Registrasi</Link>
+                        <Link href={`/halaman/registrasi-klinik/${idPasien}`} className="btn btn-primary">Registrasi</Link>
                     </div>
                 </div>
                 </form>

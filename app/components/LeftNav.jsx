@@ -26,6 +26,7 @@ const LeftNav = () => {
                         <ul className="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                             <li><Link href="/layar-antrian-pendaftaran" target='_blank' className='link-body-emphasis d-inline-flex text-decoration-none rounded'>Layar Antrian Pendaftaran</Link></li>
                             <li><Link href="/layar-antrian-klinik" target='_blank' className='link-body-emphasis d-inline-flex text-decoration-none rounded'>Layar Antrian Klinik</Link></li>
+                            <li><Link href="/antrian" target='_blank' className='link-body-emphasis d-inline-flex text-decoration-none rounded'>Layar Antrian Pendaftaran</Link></li>
                         </ul>
                     </div>
                 </li>

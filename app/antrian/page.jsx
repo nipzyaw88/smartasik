@@ -2,8 +2,15 @@
 
 import { fetchData } from "next-auth/client/_utils";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Modal } from "react-bootstrap";
 
 const Antrian = () => {
+    const router = useRouter();
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
     const datex = new Date().toLocaleDateString('id-ID', {
         weekday: 'long',
         day: 'numeric',
@@ -17,56 +24,146 @@ const Antrian = () => {
     const [totalAntrianKlinikGigi, setTotalAntrianKlinikGigi] = useState(0);
     const [antrianKlinikKia, setAntrianKlinikKia] = useState(0);
     const [totalAntrianKlinikKia, setTotalAntrianKlinikKia] = useState(0);
+    const [jenisAntrian, setJenisAntrian] = useState([])
+    const [dokter, setDokter] = useState([])
+    const [aktifAntrian, setAktifAntrian] = useState(null);
+    const [idAntrian, setIdAntrian] = useState(null);
+    // window.bootstrap = require('bootstrap/dist/js/bootstrap.bundle.js');
 
     async function fetchKlinikUmum() {
-        const totalAntrianKlinikUmum = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/t_antrianregistrasi/get/by/10/0`, {
+        const jenisAntrian = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/jenisantrian/get/by/10/0`, {
             method: "POST",
             body: JSON.stringify({
-                id_jenisantrian : 1,
+                jenisantrian_aktif : 1,
             }),
             headers: {
                 'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
                 'Content-Type': 'application/json'
             }
         }).then((response) => response.json())
-        .then((data) => {
-            settotalantrianklinik(data.total);
+        .then(async (data) => {
+            // console.log(data.data)
+            const nnAntrian = {};
+            if(data.data.length > 0) {
+                for(let i = 0; i < data.data.length; i++) {
+                    const angka = await getAntrian(data.data[i].id_jenisantrian)
+                    data.data[i]['noAntrian'] = angka
+                }
+            }
+            console.log(data.data)
+            setJenisAntrian(data.data);
         })
         .catch(console.error);
         
-        const antrianKlinikUmum = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/t_antrianregistrasi/get/by/10/0`, {
-            method: "POST",
-            body: JSON.stringify({
-                id_jenisantrian : 1,
-                is_panggil: false
-            }),
-            headers: {
-                'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
-                'Content-Type': 'application/json'
-            }
-        }).then((response) => response.json())
-        .then((data) => {
-            const nomorAntrian = parseInt(data.data.pop().no_antrianregistrasi) + 1;
-            console.log(nomorAntrian);
-            setantrianklinik(nomorAntrian);
-        })
-        .catch(console.error);
+        // const totalAntrianKlinikUmum = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/t_antrianregistrasi/get/by/10/0/ASC`, {
+        //     method: "POST",
+        //     body: JSON.stringify({
+        //         id_jenisantrian : 1,
+        //     }),
+        //     headers: {
+        //         'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
+        //         'Content-Type': 'application/json'
+        //     }
+        // }).then((response) => response.json())
+        // .then((data) => {
+        //     settotalantrianklinik(data.total);
+        // })
+        // .catch(console.error);
+        
+        // const antrianKlinikUmum = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/t_antrianregistrasi/get/by/10/0/ASC`, {
+        //     method: "POST",
+        //     body: JSON.stringify({
+        //         id_jenisantrian : 1,
+        //         is_panggil: false
+        //     }),
+        //     headers: {
+        //         'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
+        //         'Content-Type': 'application/json'
+        //     }
+        // }).then((response) => response.json())
+        // .then((data) => {
+        //     if(data.data.length > 0) {
+        //         const nomorAntrian = parseInt(data.data.pop().no_antrianregistrasi) + 1;
+        //         console.log(nomorAntrian);
+        //         setantrianklinik(nomorAntrian);
+        //     }
+        // })
+        // .catch(console.error);
     }
 
     useEffect(() => {
         fetchKlinikUmum()
     }, [])
 
-    const hitantrian = async (kat) => {
-        console.log(kat);
-        if(kat === 'klinik_umum') {
+    const getDokter = async (id_jenisantrian) => {
+        const dd = new Date();
+        const day = dd.getDay()
+        const dateFormat = dd.toLocaleDateString('id-ID', {
+            year: 'numeric',
+            month: "2-digit",
+            day: '2-digit'
+        })
+        console.log(dateFormat)
+        const doki = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/jadwaldokter/get/by/10/0`, {
+            method: "POST",
+            body: JSON.stringify({
+                id_ruangan: id_jenisantrian,
+                kodehari_jadwaldokter: day,
+                createtime: `${dd.getFullYear()}-${dd.toLocaleDateString('id-ID', {month:'2-digit'})}-${dd.toLocaleDateString('id-ID',{day: '2-digit'})}`
+            }),
+            headers: {
+                'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
+                'Content-Type': 'application/json'
+            }
+        }).then((response) => response.json())
+        .then((data) => {
+            console.log(data);
+            setDokter(data.data);
+            setIdAntrian(id_jenisantrian)
+            setShow(true);
+            // setAktifAntrian(id_jenisantrian)
+        })
+        .catch(console.error);
+    }
+
+    const getAntrian = id_jenisantrian => new Promise(resolve => {
+        let noAntrian = null;
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/t_antrianregistrasi/get/by/10/0/ASC`, {
+            method: "POST",
+            body: JSON.stringify({
+                id_jenisantrian : id_jenisantrian,
+                // is_panggil: false
+            }),
+            headers: {
+                'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
+                'Content-Type': 'application/json'
+            }
+        }).then((response) => response.json())
+        .then((data) => {
+            if(data.data.length > 0) {
+                const nomorAntrian = parseInt(data.data.pop().no_antrianregistrasi) + 1;
+                noAntrian = nomorAntrian;
+                // console.log(nomorAntrian);
+                // resolve(nomorAntrian)
+                // setantrianklinik(nomorAntrian);
+            }
+        })
+        .finally(() => {
+            resolve(noAntrian)
+        })
+        .catch(console.error);
+
+    })
+
+    const hitantrian = async (id_dokter, id_ruangan) => {
+        // if(kat === 'klinik_umum') {
             const antrianKlinikUmum = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/t_antrianregistrasi/add`, {
                 method: "POST",
                 body: JSON.stringify({
-                    id_jenisantrian:1, 
+                    id_jenisantrian:idAntrian, 
                     id_pasien: '', 
-                    id_ruangan:1, 
-                    id_dokter:1, 
+                    id_ruangan:id_ruangan, 
+                    id_dokter:id_dokter, 
                     id_kelompokpenjamin: '', 
                     id_penjamin: '', 
                     id_registrasi: '', 
@@ -80,10 +177,11 @@ const Antrian = () => {
                 }
             }).then((response) => response.json())
             .then((data) => {
+                setShow(false);
                 fetchKlinikUmum();
             })
             .catch(console.error);
-        }
+        // }
     }
     return (
         <div className='container-fluid vh-100'>
@@ -92,31 +190,22 @@ const Antrian = () => {
                 <h1>KLINIK PRATAMA EDELWEIS</h1>
                 <h3>{datex}</h3>
                 <div className='col-12 d-flex justify-content-center mt-5'>
-                    <div className='row gx-5'>
-                        <div className='col' onClick={() => hitantrian('klinik_umum')}>
-                            <div className="box box-klinik-umum text-center">
-                                <h4 className="label-antrian ">KLINIK UMUM</h4>
-                                <p className="angka-antrian">{antrianklinik}</p>
-                                <h4 className="label-antrian">SISA ANTRIAN</h4>
-                                <p className="angka-antrian">{totalantrianklinik}</p>
-                            </div>
-                        </div>
-                        <div className='col'>
-                            <div className="box box-klinik-gigi text-center">
-                                <h4 className="label-antrian">KLINIK GIGI</h4>
-                                <p className="angka-antrian">{antrianKlinikGigi}</p>
-                                <h4 className="label-antrian">SISA ANTRIAN</h4>
-                                <p className="angka-antrian">{totalAntrianKlinikGigi}</p>
-                            </div>
-                        </div>
-                        <div className='col'>
-                            <div className="box box-klinik-kia text-center">
-                                <h4 className="label-antrian">KLINIK KIA</h4>
-                                <p className="angka-antrian">{antrianKlinikKia}</p>
-                                <h4 className="label-antrian">SISA ANTRIAN</h4>
-                                <p className="angka-antrian">{totalAntrianKlinikKia}</p>
-                            </div>
-                        </div>
+                    <div className='row m-auto gx-5'>
+                        {jenisAntrian && jenisAntrian.map((l, i) => {
+                            return (
+                                <>
+                                <div key={i} className='col mb-5' onClick={() => getDokter(l.id_jenisantrian)}>
+                                    <div className="box rounded-4 text-center" style={{backgroundColor: `${l.jenisantrian_warna}`, border: '4px solid #817e7e'}}>
+                                        <h4 className="label-antrian ">{l.nama_jenisantrian}</h4>
+                                        <p className="angka-antrian">{l.noAntrian ?? 0}</p>
+                                        <h4 className="label-antrian">SISA ANTRIAN</h4>
+                                        <p className="angka-antrian">{l.maksimum_antrian - l.noAntrian}</p>
+                                    </div>
+                                </div>
+                                {/* {(i+1) % 3 == 0 ? <div className="row"></div> : null} */}
+                                </>
+                            )
+                        })}
                     </div>
                 </div>
                 <div className="logo mt-5">
@@ -128,6 +217,32 @@ const Antrian = () => {
                     </p>
                 </div>
             </div>
+            {/* <ModalAntrian data={dokter} id_jenisantrian={idAntrian} isShow={show}/> */}
+            <Modal size="xl" backdrop='static' show={show}>
+                <Modal.Body>
+                    <div className='d-flex flex-column justify-content-center align-items-center h-100'>
+                        <div className='col-12 d-flex justify-content-center mt-5'>
+                            <div className='row m-auto gx-5'>
+                                {dokter && dokter.map((l,i) => {
+                                    return (
+                                        <div key={i} className='col mb-5' onClick={() => hitantrian(l.id_dokter, l.id_ruangan)}>
+                                        <div className="box rounded-4 text-center" style={{backgroundColor: 'green', border: '4px solid #817e7e'}}>
+                                            <h4 className="label-antrian ">DOKTER <br></br>{l.nama_dokter}</h4>
+                                            <p className="angka-antrian">{l.antrian}</p>
+                                            <h4 className="label-antrian">SISA ANTRIAN</h4>
+                                            <p className="angka-antrian">{l.kuotareservasi_jadwaldokter - l.antrian}</p>
+                                        </div>
+                                    </div>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <button onClick={handleClose} type="button" className="btn btn-lg btn-primary">KEMBALI</button>
+                </Modal.Footer>
+            </Modal>
         </div>
     )
 }
