@@ -109,7 +109,7 @@ const Antrian = () => {
             body: JSON.stringify({
                 id_ruangan: id_jenisantrian,
                 kodehari_jadwaldokter: day,
-                createtime: `${dd.getFullYear()}-${dd.toLocaleDateString('id-ID', {month:'2-digit'})}-${dd.toLocaleDateString('id-ID',{day: '2-digit'})}`
+                // createtime: `${dd.getFullYear()}-${dd.toLocaleDateString('id-ID', {month:'2-digit'})}-${dd.toLocaleDateString('id-ID',{day: '2-digit'})}`
             }),
             headers: {
                 'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
