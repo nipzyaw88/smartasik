@@ -228,7 +228,7 @@ const Antrian = () => {
                                         <div key={i} className='col mb-5' onClick={() => hitantrian(l.id_dokter, l.id_ruangan)}>
                                         <div className="box rounded-4 text-center" style={{backgroundColor: 'green', border: '4px solid #817e7e'}}>
                                             <h4 className="label-antrian ">DOKTER <br></br>{l.nama_dokter}</h4>
-                                            <p className="angka-antrian">{l.antrian}</p>
+                                            <p className="angka-antrian">{l.antrian + 1}</p>
                                             <h4 className="label-antrian">SISA ANTRIAN</h4>
                                             <p className="angka-antrian">{l.kuotareservasi_jadwaldokter - l.antrian}</p>
                                         </div>
