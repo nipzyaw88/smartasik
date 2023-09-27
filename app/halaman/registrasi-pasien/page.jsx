@@ -157,7 +157,7 @@ const RegistrasiPasien = () => {
 
     const handlePanggil = () => {
         let u = new SpeechSynthesisUtterance(`Antrian nomor ${currentAntrian}. Ke loket ${loketRef.current.value.split('|')[1]}`);
-        u.voice = voicesArray[11];
+        u.lang = 'id-ID';
         u.volume= 1;
         const date = new Date();
         const formatedDate = date.toLocaleDateString('id-ID', {

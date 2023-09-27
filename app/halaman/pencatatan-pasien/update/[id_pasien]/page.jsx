@@ -77,11 +77,11 @@ const PencatatanPasien = ({ params }) => {
         }
 
         async function fetchPasien() {
-            const pasienx = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pasien/get/by/10/0`, {
-                method: "POST",
-                body: JSON.stringify({
-                    id_pasien: id_pasien
-                }),
+            const pasienx = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pasien/get_detilpasien/${id_pasien}`, {
+                method: "GET",
+                // body: JSON.stringify({
+                //     id_pasien: id_pasien
+                // }),
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
                     'Content-Type': 'application/json'
@@ -102,7 +102,7 @@ const PencatatanPasien = ({ params }) => {
                 golonganDarahRef.current.value = val.golongandarah_pasien
                 namaIbuRef.current.value = val.nama_ibu_kandung
                 namaAyahRef.current.value = val.nama_ayah
-                namaPasanganRef.current.value = val.nama_suami
+                namaPasanganRef.current.value = val.nama_pasangan
                 pendidikanRef.current.value = val.id_pendidikan
                 pekerjaanRef.current.value = val.id_pekerjaan
                 sukuRef.current.value = val.id_suku
@@ -221,7 +221,7 @@ const PencatatanPasien = ({ params }) => {
                 }
             }).then((response) => response.json())
             .then((data) => {
-                console.log(data)
+                console.log('data kelurahan',data)
                 if(data.data.length > 0) {
                     data.data.map((d) => {
                         kelurahanx.push({value : `${d.id_kelurahan}|${d.id_kecamatan}|${d.id_kotakabupaten}|${d.id_propinsi}`, label : `${d.nama_kelurahan} / ${d.nama_kecamatan} / ${d.nama_kotakabupaten} / ${d.nama_propinsi}`});
@@ -593,7 +593,7 @@ const PencatatanPasien = ({ params }) => {
                                         <label className="form-label">Nama Pasangan</label>
                                     </div>
                                     <div className="col-md-5">
-                                        <input className="form-control form-control-sm" type='text' name="nama_suami" ref={namaPasanganRef}/>
+                                        <input className="form-control form-control-sm" type='text' name="nama_pasangan" ref={namaPasanganRef}/>
                                     </div>
                                 </div>
                             </div>

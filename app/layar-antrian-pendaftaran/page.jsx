@@ -6,12 +6,13 @@ const LayarAntrianPendaftaran = () => {
     const [antrian, setAntrian] = useState();
     const [loket, setLoket] = useState();
 
-    const getAntrianx = (id_jenisantrian, id_loket) => new Promise(resolve => {
+    const getAntrianx = (id_loket) => new Promise(resolve => {
+        const res = {nomorAntrian: '', kode_jenisantrian: ''};
         const antrianLoket1 = fetch(`${process.env.NEXT_PUBLIC_API_URL}/t_antrianregistrasi/get/by/1/0/DESC`, {
             method: "POST",
             body: JSON.stringify({
                 id_loket: id_loket,
-                id_jenisantrian: id_jenisantrian,
+                // id_jenisantrian: id_jenisantrian,
                 is_panggil: true,
                 limited: 0
             }),
@@ -22,10 +23,11 @@ const LayarAntrianPendaftaran = () => {
         }).then((response) => response.json())
         .then((data) => {
             if(data.data.length > 0) {
-                const nomorAntrian = data.data[0].no_antrianregistrasi;
-                resolve(nomorAntrian)
+                res.nomorAntrian = data.data[0].no_antrianregistrasi;
+                res.kode_jenisantrian = data.data[0].kode_jenisantrian;
+                resolve(res)
             } else {
-                resolve('')
+                resolve(res)
             }
         })
         .catch(console.error);
@@ -36,7 +38,7 @@ const LayarAntrianPendaftaran = () => {
             const loket = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/loket/get/by/10/0`, {
                 method: "POST",
                 body: JSON.stringify({
-                    id_jenisantrian: 1,
+                    // id_jenisantrian: 1,
                     loket_aktif: true
                 }),
                 headers: {
@@ -48,8 +50,9 @@ const LayarAntrianPendaftaran = () => {
                     if(data.data.length > 0) {
                         for(let i = 0; i < data.data.length; i++) {
                             // console.log(`ini : ${JSON.stringify(data.data[i])}`)
-                            const antr = await getAntrianx(data.data[i].id_jenisantrian, data.data[i].id_loket);
-                            data.data[i]['noDipanggil'] = antr ?? null;
+                            const antr = await getAntrianx(data.data[i].id_loket);
+                            data.data[i]['noDipanggil'] = antr.nomorAntrian ?? null;
+                            data.data[i]['kodeJenisAntrian'] = antr.kode_jenisantrian ?? null;
                         }
                     }
                     setLoket(data.data)
@@ -59,7 +62,7 @@ const LayarAntrianPendaftaran = () => {
 
         // getAntrian()
 
-        const inte = setInterval(() => {getAntrian()}, 1000)
+        const inte = setInterval(() => {getAntrian()}, 2000)
         return () => clearInterval(inte);
     }, [])
 
@@ -68,7 +71,7 @@ const LayarAntrianPendaftaran = () => {
             <h1>ANTRIAN PENDAFTARAN</h1>
             <h1>KLINIK PRATAMA EDELWEIS</h1>
             <div className='col-12 mt-5'>
-                <div className='row'>
+                <div className='row m-auto'>
                     <div className='col-7 px-5'>
                         <div className='bg-tv'>
 

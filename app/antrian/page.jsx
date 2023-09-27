@@ -192,14 +192,33 @@ const Antrian = () => {
                 <div className='col-12 d-flex justify-content-center mt-5'>
                     <div className='row m-auto gx-5'>
                         {jenisAntrian && jenisAntrian.map((l, i) => {
+                            let bg = '';
+                            switch (l.kode_jenisantrian) {
+                                case 'P':
+                                    bg = 'assets/images/umum.svg';
+                                    break;
+                                case 'G':
+                                    bg = 'assets/images/klinik_gigi.svg';
+                                    break;
+                                case 'L':
+                                    bg = 'assets/images/kia.svg';
+                                    break;
+                                    
+                                default:
+                                    bg = 'assets/images/umum.svg';
+                                    break;
+                            }
                             return (
                                 <>
-                                <div key={i} className='col mb-5' onClick={() => getDokter(l.id_jenisantrian)}>
-                                    <div className="box rounded-4 text-center" style={{backgroundColor: `${l.jenisantrian_warna}`, border: '4px solid #817e7e'}}>
-                                        <h4 className="label-antrian ">{l.nama_jenisantrian}</h4>
+                                {/* style={{ backgroundImage: `url("${bg}")`, backgroundSize: 'contain', backgroundRepeat : 'no-repeat', backgroundPosition: 'center', backgroundColor: `${l.jenisantrian_warna}`, border: '4px solid #817e7e'}} */}
+                                <div key={i} className='col mb-5'>
+                                {/* style={{border: '4px solid #817e7e'}} onClick={() => getDokter(l.id_jenisantrian)} */}
+                                    <div className="box rounded-4 text-center" onClick={() => getDokter(l.id_jenisantrian)}>
+                                        <img src={bg} />
+                                        {/* <h4 className="label-antrian ">{l.nama_jenisantrian}</h4>
                                         <p className="angka-antrian">{l.noAntrian ?? 0}</p>
                                         <h4 className="label-antrian">SISA ANTRIAN</h4>
-                                        <p className="angka-antrian">{l.maksimum_antrian - l.noAntrian}</p>
+                                        <p className="angka-antrian">{l.maksimum_antrian - l.noAntrian}</p> */}
                                     </div>
                                 </div>
                                 {/* {(i+1) % 3 == 0 ? <div className="row"></div> : null} */}
@@ -228,9 +247,9 @@ const Antrian = () => {
                                         <div key={i} className='col mb-5' onClick={() => hitantrian(l.id_dokter, l.id_ruangan)}>
                                         <div className="box rounded-4 text-center" style={{backgroundColor: 'green', border: '4px solid #817e7e'}}>
                                             <h4 className="label-antrian ">DOKTER <br></br>{l.nama_dokter}</h4>
-                                            <p className="angka-antrian">{l.antrian + 1}</p>
+                                            <p className="angka-antrian">{parseInt(l.antrian) + 1}</p>
                                             <h4 className="label-antrian">SISA ANTRIAN</h4>
-                                            <p className="angka-antrian">{l.kuotareservasi_jadwaldokter - l.antrian}</p>
+                                            <p className="angka-antrian">{l.kuotareservasi_jadwaldokter - (parseInt(l.antrian) + 1)}</p>
                                         </div>
                                     </div>
                                     )

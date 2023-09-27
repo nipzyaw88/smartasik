@@ -17,7 +17,7 @@ const AntrianPendaftaran = ({ loket }) => {
                                   <h4 className='label-antrian'>LOKET {l.nourut_loket}</h4>
                               </div>
                               <div className='col'>
-                                  <h4 className='angka-antrian'>{l.formatnomor_loket.substring(2,0)}{l.noDipanggil}</h4>
+                                  <h4 className='angka-antrian'>{l.kodeJenisAntrian}-{l.noDipanggil}</h4>
                               </div>
                           </div>
                       </div>
