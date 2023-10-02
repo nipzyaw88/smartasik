@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { useState } from "react";
 
 const LoginForm = ({ type, login, setLogin, submitting, handleSubmit }) => {
+  const [visible, setVisible] = useState(false);
   return (
     <section className='col-md-5'>
       <form
@@ -19,16 +21,17 @@ const LoginForm = ({ type, login, setLogin, submitting, handleSubmit }) => {
                 className='form-control'
             />
         </div>
-        <div className="mb-3">
+        <div className="input-group mb-3">
             {/* <label className="form-label">Kata Kunci</label> */}
             <input
                 value={login.password}
                 onChange={(e) => setLogin({ ...login, password: e.target.value })}
-                type='text'
+                type={visible ? 'text' : 'password'}
                 placeholder='Kata kunci...'
                 required
                 className='form-control'
             />
+            <span className="input-group-text" id="basic-addon2" onClick={() => setVisible(!visible)}><i className="bi bi-eye"></i></span>
         </div>
 
         <div className='row'>

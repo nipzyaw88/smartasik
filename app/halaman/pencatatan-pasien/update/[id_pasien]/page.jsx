@@ -84,7 +84,8 @@ const PencatatanPasien = ({ params }) => {
                 // }),
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
                 }
             }).then((response) => response.json())
             .then((data) => {
@@ -123,7 +124,8 @@ const PencatatanPasien = ({ params }) => {
                 method: "GET",
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
                 }
             }).then((response) => response.json())
             .then((data) => {
@@ -138,7 +140,8 @@ const PencatatanPasien = ({ params }) => {
                 method: "GET",
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
                 }
             }).then((response) => response.json())
             .then((data) => {
@@ -153,7 +156,8 @@ const PencatatanPasien = ({ params }) => {
                 method: "GET",
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
                 }
             }).then((statusnikah) => statusnikah.json())
             .then((data) => {
@@ -168,7 +172,8 @@ const PencatatanPasien = ({ params }) => {
                 method: "GET",
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
                 }
             }).then((pendidikan) => pendidikan.json())
             .then((data) => {
@@ -183,7 +188,8 @@ const PencatatanPasien = ({ params }) => {
                 method: "GET",
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
                 }
             }).then((pekerjaan) => pekerjaan.json())
             .then((data) => {
@@ -198,7 +204,8 @@ const PencatatanPasien = ({ params }) => {
                 method: "GET",
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
                 }
             }).then((suku) => suku.json())
             .then((data) => {
@@ -217,7 +224,8 @@ const PencatatanPasien = ({ params }) => {
                 }),
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
                 }
             }).then((response) => response.json())
             .then((data) => {
@@ -340,7 +348,8 @@ const PencatatanPasien = ({ params }) => {
             // }),
             headers: {
                 'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache'
             }
         }).then((response) => response.json())
         .then((data) => {

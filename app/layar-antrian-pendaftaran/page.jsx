@@ -7,7 +7,7 @@ const LayarAntrianPendaftaran = () => {
     const [loket, setLoket] = useState();
 
     const getAntrianx = (id_loket) => new Promise(resolve => {
-        const res = {nomorAntrian: '', kode_jenisantrian: ''};
+        const res = { nomorAntrian: '', kode_jenisantrian: '' };
         const antrianLoket1 = fetch(`${process.env.NEXT_PUBLIC_API_URL}/t_antrianregistrasi/get/by/1/0/DESC`, {
             method: "POST",
             body: JSON.stringify({
@@ -18,19 +18,20 @@ const LayarAntrianPendaftaran = () => {
             }),
             headers: {
                 'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache'
             }
         }).then((response) => response.json())
-        .then((data) => {
-            if(data.data.length > 0) {
-                res.nomorAntrian = data.data[0].no_antrianregistrasi;
-                res.kode_jenisantrian = data.data[0].kode_jenisantrian;
-                resolve(res)
-            } else {
-                resolve(res)
-            }
-        })
-        .catch(console.error);
+            .then((data) => {
+                if (data.data.length > 0) {
+                    res.nomorAntrian = data.data[0].no_antrianregistrasi;
+                    res.kode_jenisantrian = data.data[0].kode_jenisantrian;
+                    resolve(res)
+                } else {
+                    resolve(res)
+                }
+            })
+            .catch(console.error);
     })
 
     useEffect(() => {
@@ -43,12 +44,13 @@ const LayarAntrianPendaftaran = () => {
                 }),
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
                 }
             }).then((response) => response.json())
                 .then(async (data) => {
-                    if(data.data.length > 0) {
-                        for(let i = 0; i < data.data.length; i++) {
+                    if (data.data.length > 0) {
+                        for (let i = 0; i < data.data.length; i++) {
                             // console.log(`ini : ${JSON.stringify(data.data[i])}`)
                             const antr = await getAntrianx(data.data[i].id_loket);
                             data.data[i]['noDipanggil'] = antr.nomorAntrian ?? null;
@@ -62,7 +64,7 @@ const LayarAntrianPendaftaran = () => {
 
         // getAntrian()
 
-        const inte = setInterval(() => {getAntrian()}, 2000)
+        const inte = setInterval(() => { getAntrian() }, 2000)
         return () => clearInterval(inte);
     }, [])
 
@@ -74,7 +76,10 @@ const LayarAntrianPendaftaran = () => {
                 <div className='row m-auto'>
                     <div className='col-7 px-5'>
                         <div className='bg-tv'>
-
+                            <div class="ratio ratio-16x9">
+                                <iframe width="560" height="315" src="https://www.youtube.com/embed/L1bmnwSZKnQ?si=lpvw9AOklDk2Q-1H" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" autoplay allowfullscreen></iframe>
+                            </div>
+                            {/* <video src='https://www.youtube.com/watch?v=L1bmnwSZKnQ&pp=ygUMa2xpbmlrIHVuZGlw' autoPlay={true}></video> */}
                         </div>
                     </div>
                     <div className='col-5 text-center'>

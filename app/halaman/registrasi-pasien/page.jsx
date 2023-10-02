@@ -41,7 +41,8 @@ const RegistrasiPasien = () => {
                 method: "GET",
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
                 }
             }).then((response) => response.json())
             .then((data) => {
@@ -53,7 +54,8 @@ const RegistrasiPasien = () => {
                 method: "GET",
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
                 }
             }).then((jenis) => jenis.json())
             .then((data) => {
@@ -68,7 +70,7 @@ const RegistrasiPasien = () => {
     }, []);
 
     const getAntrian = (jenis) => {
-        const param = jenisRef.current.value;
+        const param = jenisRef.current.value.split('|')[0];
         const loketx = loketRef.current.value;
         if(param !== '' && loket !== '') {
             const antrian = fetch(`${process.env.NEXT_PUBLIC_API_URL}/t_antrianregistrasi/get/by/10/0/ASC`, {
@@ -80,7 +82,8 @@ const RegistrasiPasien = () => {
                 }),
                 headers: {
                     'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-cache'
                 }
             }).then((response) => response.json())
             .then((data) => {
@@ -88,7 +91,7 @@ const RegistrasiPasien = () => {
                 if(data.data.length > 0) {
                     setArrayAntrian(data.data);
                     setCurrentAntrian(data.data[0].no_antrianregistrasi);
-                    getAntrianSekarang(jenisRef.current.value, data.data[0].id_antrianregistrasi)
+                    getAntrianSekarang(jenisRef.current.value.split('|')[0], data.data[0].id_antrianregistrasi)
                     if(data.data.length > 1) {
                         setNextAntrian(1);
                     }
@@ -104,7 +107,7 @@ const RegistrasiPasien = () => {
     }
     
     const getTotalAntrian = (jenis) => {
-        const param = jenisRef.current.value;
+        const param = jenisRef.current.value.split('|')[0];
         if(param !== '') {
             const antrian = fetch(`${process.env.NEXT_PUBLIC_API_URL}/t_antrianregistrasi/get/by/10/0/ASC`, {
                 method: "POST",
@@ -148,17 +151,18 @@ const RegistrasiPasien = () => {
     }
 
     const handlePrevAntrian = () => {
-        getAntrianSekarang(jenisRef.current.value, prevRef.current.value)
+        getAntrianSekarang(jenisRef.current.value.split('|')[0], prevRef.current.value)
     }
 
     const handleNextAntrian = () => {
-        getAntrianSekarang(jenisRef.current.value, nextRef.current.value)
+        getAntrianSekarang(jenisRef.current.value.split('|')[0], nextRef.current.value)
     }
 
     const handlePanggil = () => {
-        let u = new SpeechSynthesisUtterance(`Antrian nomor ${currentAntrian}. Ke loket ${loketRef.current.value.split('|')[1]}`);
+        let u = new SpeechSynthesisUtterance(`Antrian nomor : ${jenisRef.current.value.split('|')[1]} ${currentAntrian} : Ke loket ${loketRef.current.value.split('|')[1]}`);
         u.lang = 'id-ID';
         u.volume= 1;
+        u.rate = 0.8
         const date = new Date();
         const formatedDate = date.toLocaleDateString('id-ID', {
             year: 'numeric',
@@ -265,7 +269,7 @@ const RegistrasiPasien = () => {
                                 <option value="">-- Pilih Jenis Antrian --</option>
                                 {jenisAntrian.map((option) => {
                                     return (
-                                        <option key={option.id_jenisantrian} value={option.id_jenisantrian}>{option.nama_jenisantrian}</option>
+                                        <option key={option.id_jenisantrian} value={`${option.id_jenisantrian}|${option.kode_jenisantrian}`}>{option.nama_jenisantrian}</option>
                                     )
                                 })}
                             </select>

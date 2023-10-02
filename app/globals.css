@@ -156,7 +156,8 @@ main {
 
 .bg-tv {
     background-color: white;
-    height: 100%;
+    /* min-height: 100%; */
+    padding: 20px;
 }
 
 #scroll-container {

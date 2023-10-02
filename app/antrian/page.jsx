@@ -4,6 +4,7 @@ import { fetchData } from "next-auth/client/_utils";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Modal } from "react-bootstrap";
+import { jsPDF } from "jspdf"
 
 const Antrian = () => {
     const router = useRouter();
@@ -17,6 +18,20 @@ const Antrian = () => {
         month: 'long',
         year: 'numeric',
     });
+    const datePrint = new Date().toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+    });
+    const dateCetak = new Date().toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        timeZone: 'Asia/Jakarta',
+        hour:'2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
 
     const [antrianklinik, setantrianklinik] = useState(0);
     const [totalantrianklinik, settotalantrianklinik] = useState(0);
@@ -25,6 +40,7 @@ const Antrian = () => {
     const [antrianKlinikKia, setAntrianKlinikKia] = useState(0);
     const [totalAntrianKlinikKia, setTotalAntrianKlinikKia] = useState(0);
     const [jenisAntrian, setJenisAntrian] = useState([])
+    const [kodeAntrian, setKodeJenisAntrian] = useState(null)
     const [dokter, setDokter] = useState([])
     const [aktifAntrian, setAktifAntrian] = useState(null);
     const [idAntrian, setIdAntrian] = useState(null);
@@ -113,7 +129,8 @@ const Antrian = () => {
             }),
             headers: {
                 'Authorization': 'Basic ' + btoa('moeMoe:09BabyPink'),
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache'
             }
         }).then((response) => response.json())
         .then((data) => {
@@ -177,7 +194,24 @@ const Antrian = () => {
                 }
             }).then((response) => response.json())
             .then((data) => {
+                console.log(data.data.nomorAntrian)
                 setShow(false);
+                const doc = new jsPDF({
+                    format: 'a5'
+                })
+                doc.setFontSize(12)
+                doc.text('Klinik Pratama Edelweis',76,10, {align:"center"})
+                doc.text('Jl. Alamat',76,15, {align:"center"})
+                doc.text('No. Telepon (000) 000-000',76,20, {align:"center"})
+                doc.setLineWidth(1.0)
+                doc.line(20,25,130,25)
+                doc.text(`Tanggal Antrian : ${datePrint}`,76,35, {align:"center"})
+                doc.setFontSize(72)
+                doc.text(`${kodeAntrian}-${data.data.nomorAntrian}`,76,60, {align:"center"})
+                doc.setFontSize(12)
+                doc.text(`${dateCetak}`,76,70, {align:"center"})
+                doc.autoPrint()
+                doc.output('dataurlnewwindow')
                 fetchKlinikUmum();
             })
             .catch(console.error);
@@ -213,7 +247,7 @@ const Antrian = () => {
                                 {/* style={{ backgroundImage: `url("${bg}")`, backgroundSize: 'contain', backgroundRepeat : 'no-repeat', backgroundPosition: 'center', backgroundColor: `${l.jenisantrian_warna}`, border: '4px solid #817e7e'}} */}
                                 <div key={i} className='col mb-5'>
                                 {/* style={{border: '4px solid #817e7e'}} onClick={() => getDokter(l.id_jenisantrian)} */}
-                                    <div className="box rounded-4 text-center" onClick={() => getDokter(l.id_jenisantrian)}>
+                                    <div className="box rounded-4 text-center" style={{cursor: 'pointer'}} onClick={() => {getDokter(l.id_jenisantrian); setKodeJenisAntrian(l.kode_jenisantrian)}}>
                                         <img src={bg} />
                                         {/* <h4 className="label-antrian ">{l.nama_jenisantrian}</h4>
                                         <p className="angka-antrian">{l.noAntrian ?? 0}</p>
@@ -237,23 +271,28 @@ const Antrian = () => {
                 </div>
             </div>
             {/* <ModalAntrian data={dokter} id_jenisantrian={idAntrian} isShow={show}/> */}
-            <Modal size="xl" backdrop='static' show={show}>
+            <Modal size="xl" backdrop='static' centered={true} show={show}>
                 <Modal.Body>
                     <div className='d-flex flex-column justify-content-center align-items-center h-100'>
                         <div className='col-12 d-flex justify-content-center mt-5'>
                             <div className='row m-auto gx-5'>
-                                {dokter && dokter.map((l,i) => {
-                                    return (
-                                        <div key={i} className='col mb-5' onClick={() => hitantrian(l.id_dokter, l.id_ruangan)}>
-                                        <div className="box rounded-4 text-center" style={{backgroundColor: 'green', border: '4px solid #817e7e'}}>
-                                            <h4 className="label-antrian ">DOKTER <br></br>{l.nama_dokter}</h4>
-                                            <p className="angka-antrian">{parseInt(l.antrian) + 1}</p>
-                                            <h4 className="label-antrian">SISA ANTRIAN</h4>
-                                            <p className="angka-antrian">{l.kuotareservasi_jadwaldokter - (parseInt(l.antrian) + 1)}</p>
+                                {dokter.length == 0 ? <h2>Tidak ada dokter yang bertugas</h2> : 
+                                    dokter.map((l,i) => {
+                                        return (
+                                            <div key={i} className='col mb-5' onClick={() => hitantrian(l.id_dokter, l.id_ruangan)}>
+                                            <div className="box rounded-4 text-center h-100" style={{backgroundColor: 'green', border: '4px solid #817e7e'}}>
+                                                <h4 className="label-antrian ">DOKTER <br></br>{l.nama_dokter}</h4>
+                                                <p className="angka-antrian">{parseInt(l.antrian) + 1}</p>
+                                                <h4 className="label-antrian">SISA ANTRIAN</h4>
+                                                <p className="angka-antrian">{l.kuotareservasi_jadwaldokter - (parseInt(l.antrian) + 1)}</p>
+                                            </div>
                                         </div>
-                                    </div>
+                                        )
+                                    })
+                                }
+                                {/* {dokter && dokter.map((l,i) => {
                                     )
-                                })}
+                                })} */}
                             </div>
                         </div>
                     </div>

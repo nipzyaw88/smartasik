@@ -59,7 +59,7 @@ const DaftarPasienKlinik = () => {
                                 <div className="col-md-5">
                                     <div className='input-group '>
                                         <input className="form-control form-control-sm" type='text' name="no_rekam_medik" />
-                                        <button className="btn btn-primary btn-sm" type="button" id="button-addon2"><i class="bi bi-search"></i></button>
+                                        <button className="btn btn-primary btn-sm" type="button" id="button-addon2"><i className="bi bi-search"></i></button>
                                     </div>
                                 </div>
                             </div>
