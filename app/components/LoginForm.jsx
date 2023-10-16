@@ -14,6 +14,7 @@ const LoginForm = ({ type, login, setLogin, submitting, handleSubmit }) => {
             {/* <label className="form-label">Nama Akun</label> */}
             <input
                 value={login.username}
+                autoFocus={true}
                 onChange={(e) => setLogin({ ...login, username: e.target.value })}
                 type='text'
                 placeholder='Nama pengguna...'

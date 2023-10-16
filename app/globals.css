@@ -36,7 +36,7 @@ main {
 
 .left-nav {
     width: var(--left-nav-width);
-    height: 100vh;
+    /* height: 100vh; */
     background-color: #2A5AA3;
     color: white;
 }

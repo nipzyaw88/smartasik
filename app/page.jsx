@@ -13,15 +13,17 @@ const page = () => {
     const [submitting, setIsSubmitting] = useState(false);
     const [login, setLogin] = useState({ username: "", password: "" });
     const [error, setError] = useState(null);
-    const session = async () => { await getSession() }
-    console.log(session);
+    
+    const {data: session, status} = useSession()
+    // console.log('sessionnya ',session)
+
     const userLogin = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
         const res = await signIn('credentials', {
             redirect: false,
-            email: login.username,
-            password: login.password,
+            nama_pengguna: login.username,
+            katakunci: login.password,
             callbackUrl: `${window.location.origin}`,
         });
         if (res?.error) {
@@ -52,45 +54,55 @@ const page = () => {
         return csrfToken
     }
 
-    // if(session) {
-    //     return <>
-    //         Signed in as {session.user} <br/>
-    //         <button onClick={() => signOut()}>Sign out</button>
-    //     </>
-    // }
-    return (
-        <>
-            <Header />
-            <section className='container-fluid'>
-                <div className='row'>
-                    <div className='col d-flex justify-content-center align-items-center'>
-                        <img className='img-fluid' src='/assets/images/bg.png' />
+    if(status == 'loading') {
+        return (
+            <div className="col d-flex flex-column vh-100 justify-content-center align-items-center">
+                <img src='/assets/images/logo.png' style={{width: '260px'}}/>
+                <h3>Memuat Halaman...</h3>
+            </div>
+        )
+        // return <>
+        //     Signed in as {session.user} <br/>
+        //     <button onClick={() => signOut()}>Sign out</button>
+        // </>
+    } else if(status == 'authenticated') {
+        router.push('halaman/dashboard')
+    } else {
+        return (
+            <>
+                <Header />
+                <section className='container-fluid'>
+                    <div className='row'>
+                        <div className='col d-flex justify-content-center align-items-center'>
+                            <img className='img-fluid' src='/assets/images/bg.png' />
+                        </div>
+                        <div className='col d-flex flex-column justify-content-center align-items-center'>
+                            <div>
+                                {error}
+                            </div>
+                            <div>
+                                {error}
+                            </div>
+                            <div className='radius-full mb-5'>
+    
+                            </div>
+                            <h1>SISTEM INFORMASI</h1>
+                            <h1>Klinik Pratama Edelweis</h1>
+                            <LoginForm
+                                type='Masuk'
+                                login={login}
+                                setLogin={setLogin}
+                                submitting={submitting}
+                                handleSubmit={userLogin}
+                            />
+                        </div>
                     </div>
-                    <div className='col d-flex flex-column justify-content-center align-items-center'>
-                        <div>
-                            {error}
-                        </div>
-                        <div>
-                            {error}
-                        </div>
-                        <div className='radius-full mb-5'>
+                </section>
+                <Footer/>
+            </>
+        )
+    }
 
-                        </div>
-                        <h1>SISTEM INFORMASI</h1>
-                        <h1>Klinik Pratama Edelweis</h1>
-                        <LoginForm
-                            type='Masuk'
-                            login={login}
-                            setLogin={setLogin}
-                            submitting={submitting}
-                            handleSubmit={userLogin}
-                        />
-                    </div>
-                </div>
-            </section>
-            <Footer/>
-        </>
-    )
 }
 
 export default page
